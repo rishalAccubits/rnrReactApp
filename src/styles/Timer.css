@@ -1,0 +1,35 @@
+.timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 100px;
+    /* border: 1px solid black; */
+  }
+  
+  .timer-remaining-time {
+    font-size: 2rem;
+    margin-right: 10px;
+  }
+  
+  .timer-start-button,
+  .timer-stop-button {
+    font-size: 1rem;
+    padding: 5px 10px;
+    margin-left: 10px;
+    background-color: lightgreen;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .timer-start-button:disabled,
+  .timer-stop-button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+  
+  .disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+  
