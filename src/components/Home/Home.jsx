@@ -102,7 +102,7 @@ const Home = () => {
                   setBalance={setBalance}
               />
             }
-          />        
+          />    
       </Routes>
      </div>
      

@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import { getQuestions  } from '../../helpers/api';
+import { getQuestions ,getUnlockedQuestions, submitAnswer  } from '../../helpers/api';
 import { unlockQuestion  } from '../../helpers/web3';
+import {convertFromWeiToEther} from '../../helpers/utils'
 import swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 
 const Play = (props) => {
     const [questionSet, setQuestions] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState("")
+    const [selectedItem, setSelectedItem] = useState("");
+    const [unlockedQn, setunlockedQn] = useState("");
+    const navigate = useNavigate();
+
     useEffect(() => {
         getQuestions(props.account).then((val) => {
             console.log({val})
@@ -15,13 +20,28 @@ const Play = (props) => {
         })
     },[]);
 
+    useEffect(() => {
+      if(selectedItem) {
+        openSweetAlert();
+      }
+    },[selectedItem]);
+
+    useEffect(() => {
+      if(unlockedQn) {
+        attendQuestion(unlockedQn);
+      }
+    },[unlockedQn]);
+
+    const balance = convertFromWeiToEther(props.balance)
     const handleItemClick = (item) => {
       console.log("hey i am called here", item);
+      console.log("Question Id ###",item.question.questionId)
       setSelectedItem(item.question.questionId);
-      openSweetAlert();
     };
+
   
     const openSweetAlert = () => {
+      console.log("Selected Qn ID", selectedItem)
       swal.fire({
         title: "Enter Accucoin Amount",
         input: "text",
@@ -49,6 +69,43 @@ const Play = (props) => {
       });
     };
   
+
+
+    function attendQuestion(item) {
+      swal.fire({
+        title: 'Choose an option',
+        text: `${item.data.question}`,
+        input: 'radio',
+        inputOptions: {
+          "1": `${item.data.option_1}`,
+          "2": `${item.data.option_2}`,
+          "3": `${item.data.option_3}`,
+          "4": `${item.data.option_3}`,
+        },
+        inputValidator: function (value) {
+          console.log("Selected Value", value)
+          if (!value) {
+            return 'You need to choose an option!'
+          }
+        }
+      }).then((result) => {
+        console.log("Result Value", result)
+        if (result.value) {
+          const selectedOption = unlockedQn.data['option_' + Number(result.value)];
+          submitAnswer(item.data.questionId, props.account, selectedOption).then((data) => {
+            console.log("Submitted Answer Response", data)
+            if(data.status === "error") {
+              console.log("data status is", data.status)
+              // swal("Wrong Answer", `${data.message}` , "error");
+            
+            }
+          }).catch((err) => {
+            console.log("Error is", err)
+          })
+        }
+      });
+    }
+
     const handleSubmit = async (value) => {
       console.log(`Value entered: ${value}`);
       await unlockQuestion(value, selectedItem).then((isunlocked) => {
@@ -61,45 +118,50 @@ const Play = (props) => {
 
 
     const handlePlay = async (value) => {
-      console.log("Selected Item is", selectedItem)
-      console.log(value)
-      // await unlockQuestion(selectedItem, value)
+      console.log("Selected Item", value)
+      await getUnlockedQuestions(props.account, value.question.questionId).then((item) => {
+        console.log("Questions are", item)
+        setunlockedQn(item)
+      })
     }
 
   return (
     <div>
+        <div>
+          <span class="badge bg-info">Available Balance: {props.balance}</span>
+        </div>
         {questionSet && questionSet.map((item) => (
-          <div className="card bg-dark mb-3" style={{ maxWidth: "20rem" }}>
-            <div className="card-header">Difficulty: {item.question.difficulty}</div>
-            <div className="card-body">
+          <div class="card bg-dark mb-3" style={{ maxWidth: "20rem" }}>
+            <div class="card-header">Difficulty: {item.question.difficulty}</div>
+            <div class="card-body">
               {item.questionUnlocked && 
-                  <span className="badge bg-success">Unlocked</span>
+                  <span class="badge bg-success">Unlocked</span>
               }
               {!item.questionUnlocked && 
-                  <span className="badge bg-danger">Locked</span>
+                  <span class="badge bg-danger">Locked</span>
               }
               {item.answerSubmitted && 
-                  <span className="badge bg-success">Attended</span>
+                  <span class="badge bg-success">Attended</span>
               }
-              <span className="badge bg-warning">{item.question.rewardMultiplier}X</span>
-              <h4 className="card-title">Topic: {item.question.topic}</h4>
+              <span class="badge bg-warning">{item.question.rewardMultiplier}X</span>
+              <h4 class="card-title">Topic: {item.question.topic}</h4>
               {(item.questionUnlocked && !item.answerSubmitted )&&
                 <div id={item.question._id}>
-                  <button type="button" className="btn btn-secondary" onClick={() => handlePlay(item)}>
+                  <button type="button" class="btn btn-secondary" onClick={() => handlePlay(item)}>
                     Play
                   </button>  
                 </div>
               }
               {item.answerSubmitted &&
                 <div id={item.question._id}>
-                  <button type="button" className="btn btn-secondary">
+                  <button type="button" class="btn btn-secondary">
                     Answered
                   </button>  
                 </div>
               }
               {!item.questionUnlocked &&
                 <div id={item.question._id}>
-                  <button type="button" className="btn btn-secondary" onClick={() => handleItemClick(item)}>
+                  <button type="button" class="btn btn-secondary" onClick={() => handleItemClick(item)}>
                     Unlock
                   </button>  
                 </div>
@@ -107,29 +169,30 @@ const Play = (props) => {
             </div>
           </div>
         ))}
+        
         {modalOpen &&
-        <div className="modal">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">Enter Accucoin Amount</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
+        <div class="modal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Enter Accucoin Amount</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true"></span>
               </button>
             </div>
-            <div className="modal-body">
-            <div className="form-group">
-              <label className="form-label mt-4">Available balance: </label>
-              <div className="form-group">
-                <div className="input-group mb-3">
-                  <input type="text" className="form-control" placeholder="0 Accucoin" aria-label="accucoin" aria-describedby="button-addon2"/>
-                  <button className="btn btn-primary" type="button" id="button-addon2" onSubmit={handleSubmit}>Submit</button>
+            <div class="modal-body">
+            <div class="form-group">
+              <label class="form-label mt-4">Available balance: </label>
+              <div class="form-group">
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" placeholder="0 Accucoin" aria-label="accucoin" aria-describedby="button-addon2"/>
+                  <button class="btn btn-primary" type="button" id="button-addon2" onSubmit={handleSubmit}>Submit</button>
                 </div>
               </div>
             </div>
               </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
@@ -137,20 +200,21 @@ const Play = (props) => {
         }   
         {questionSet.length < 1 && (
           <div>
-            <div className="alert alert-dismissible alert-danger">
+            <div class="alert alert-dismissible alert-danger">
               <button
                 type="button"
-                className="btn-close"
+                class="btn-close"
                 data-bs-dismiss="alert"
               ></button>
               <strong>Oh snap!</strong>{" "}
-              <a className="alert-link">
+              <a class="alert-link">
                 No Game Modes are available
               </a>{" "}
               try again.
             </div>
           </div>
         )}
+
       </div>
   )
 }

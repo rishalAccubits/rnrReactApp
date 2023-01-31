@@ -30,3 +30,25 @@ export const leaderBoard = async () => {
   );
   return response.data
 }
+
+export const getUnlockedQuestions = async (account, Id) => {
+  console.log("here log")
+
+    const response = await axios.get(
+      `${serverUrl}/question/fetch-unlocked?walletAddress=${account}&questionId=${Id}`
+      );
+    console.log({response})
+    return response.data
+}
+
+export const submitAnswer = async (id, account, option) => {
+  const response = await axios.post(
+    serverUrl + "/question/submit/",
+    {
+      questionId: id,
+      walletAddress: account,
+      option: option
+    }
+    );
+  return response.data
+}

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom"
 import {  nav, button, form, input, Image } from "react-bootstrap";
+// import { Web3Modal } from '@web3modal/standalone'
 
 const Navbar = () => {
   const navigate = useNavigate();

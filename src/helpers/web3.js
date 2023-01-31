@@ -47,7 +47,7 @@ export const claimToken = async () => {
         console.log("Claiming tokens is success \n", hash)
         return hash
     })
-    return claimToken;
+    if(claimToken);
 }
 
 export const getAccount = async () => {
@@ -82,10 +82,7 @@ export const unlockQuestion = async (value, Id) => {
     console.log("Accucoin address", accuCoinData.address)
     const currentAllowance = await accuCoin.methods.allowance(accounts[0], cryptopatiData.address).call();
     console.log("Current Allowance is", currentAllowance)
-    if (currentAllowance < value)
-      await accuCoin.methods
-        .approve(accuCoinData.address, value)
-        .send({ from: accounts[0] })
+    console.log("unlock Amount")
       await cryptopati.methods
       .unlockQuestion(Id.toString(), value)
       .send({ from: accounts[0] })
