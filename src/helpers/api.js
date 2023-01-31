@@ -2,9 +2,12 @@ import axios from "axios";
 import { serverUrl } from "../config/config";
 
 export const getQuestions = async (account) => {
+  console.log("here log")
+
     const response = await axios.get(
         `${serverUrl}/question/fetch-questionset?walletAddress=${account}`
       );
+    console.log({response})
     return response.data
 }
 

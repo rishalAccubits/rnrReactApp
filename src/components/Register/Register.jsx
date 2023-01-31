@@ -6,7 +6,7 @@ import swal from 'sweetalert';
 const Register = (props) => {
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
-  const [walletAddress, setWalletAddress] = useState(props.account ? props.account : "")
+  // const [walletAddress, setWalletAddress] = useState(props.account ? props.account : "")
   const [emailError, setEmailError] = useState("")
 
 
@@ -24,10 +24,11 @@ const Register = (props) => {
   }
 
   const handleSubmit = (e) => {
+    console.log("here")
     e.preventDefault();
     if(validateEmail(email)){
         setEmailError("")
-        registerUser(name, email, walletAddress).then(res => {
+        registerUser(name, email, props.account).then(res => {
             if(res.status == "error") {
                 swal("Failed", `${res.message}`, "error");
             } else {
@@ -52,9 +53,9 @@ const Register = (props) => {
     setName(e.target.value);
   }
 
-  const handleWalletAddressChange = (e) => {
-    setWalletAddress(e.target.value ? e.target.value : props.account);
-  }
+  // const handleWalletAddressChange = (e) => {
+  //   setWalletAddress(e.target.value ? e.target.value : props.account);
+  // }
 
 
 
@@ -74,7 +75,7 @@ const Register = (props) => {
                 </div>
                 <div className="form-group">
                   <label htmlFor="exampleWalletAddress" className="form-label mt-4">Wallet Address</label>
-                  <input type="text" className="form-control" id="exampleWalletAddress" placeholder="Wallet Address" onChange={handleWalletAddressChange} value={walletAddress} />
+                  <input type="text" className="form-control" id="exampleWalletAddress" placeholder="Wallet Address" readOnly={true}  value={props.account} />
                 </div>                
                 <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
             </fieldset>
