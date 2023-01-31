@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Landing from '../Landing/Landing'
+import Register from '../Register/Register';
 import Navbar from '../Navbar/Navbar'
 import { Route, Routes, BrowserRouter, Link } from "react-router-dom";
 import Claim from '../Claim/Claim';
 import Play from '../Play/Play';
 import LeaderBoard from '../LeaderBoard/LeaderBoard';
-import { getAccount, getCoinBalance, metamaskStatus } from '../../heplers/web3';
+import { getAccount, getCoinBalance, metamaskStatus } from '../../helpers/web3';
 import detectEthereumProvider from '@metamask/detect-provider'
 import swal from 'sweetalert';
 
@@ -44,8 +45,8 @@ const Home = () => {
   return (
     <div>
      <Navbar/>
-     <div>{
-        connected &&
+     <div>
+        { connected &&
         <Routes>
         <Route
           path="/"
@@ -81,8 +82,28 @@ const Home = () => {
           }
         />
         
+      </Routes>}
+      <Routes>
+        <Route
+            path="/register"
+            element={
+                <Register 
+                  account={account}
+                  balance={balance}
+                />
+            }
+          />
+          <Route
+            path="/tutorial"
+            element={
+                <Claim 
+                  account={account}
+                  balance={balance}
+                  setBalance={setBalance}
+              />
+            }
+          />        
       </Routes>
-     }
      </div>
      
     </div>

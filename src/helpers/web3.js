@@ -36,6 +36,20 @@ export const getCoinBalance = async () => {
     return accuCoinBalance
 }
 
+export const claimToken = async () => {
+    loadWeb3()
+    const web3 = window.web3;
+    const networkId = await web3.eth.net.getId();
+    const accounts = await web3.eth.getAccounts();
+    const cryptopatiData = Cryptopati.networks[networkId];
+    const cryptopati = new web3.eth.Contract(Cryptopati.abi, cryptopatiData.address);
+    const claimToken = await cryptopati.methods.claimTokens().send({ from: accounts[0] }).on('transactionHash', (hash) => {
+        console.log("Claiming tokens is success \n", hash)
+        return hash
+    })
+    return claimToken;
+}
+
 export const getAccount = async () => {
     loadWeb3()
     const web3 = window.web3;
@@ -52,4 +66,31 @@ export const getTimer = async () => {
     const cryptopati = new web3.eth.Contract(Cryptopati.abi, cryptopatiData.address);
     const timerValue = await cryptopati.methods.userLastClaim(accounts[0]).call()
     return timerValue
+}
+
+export const unlockQuestion = async (value, Id) => {
+    console.log("reached here")
+    loadWeb3()
+    const web3 = window.web3;
+    const accounts = await web3.eth.getAccounts();
+    const networkId = await web3.eth.net.getId();
+    const accuCoinData = AccuCoin.networks[networkId];
+    const cryptopatiData = Cryptopati.networks[networkId];
+    const accuCoin = new web3.eth.Contract(AccuCoin.abi, accuCoinData.address);
+    const cryptopati = new web3.eth.Contract(Cryptopati.abi, cryptopatiData.address);
+    console.log("Cryptopathi address", cryptopatiData.address)
+    console.log("Accucoin address", accuCoinData.address)
+    const currentAllowance = await accuCoin.methods.allowance(accounts[0], cryptopatiData.address).call();
+    console.log("Current Allowance is", currentAllowance)
+    if (currentAllowance < value)
+      await accuCoin.methods
+        .approve(accuCoinData.address, value)
+        .send({ from: accounts[0] })
+      await cryptopati.methods
+      .unlockQuestion(Id.toString(), value)
+      .send({ from: accounts[0] })
+      .on("transactionHash", (hash) => {
+        console.log("Question hash \n", hash);
+      })
+    return Id
 }

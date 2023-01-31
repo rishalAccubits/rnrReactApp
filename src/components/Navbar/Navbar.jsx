@@ -1,8 +1,15 @@
 import React from 'react'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import {  nav, button, form, input, Image } from "react-bootstrap";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
+
+  const handleSubmit = () => {
+    navigate('/register')
+  }
+
   return (
     <div>
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -27,7 +34,7 @@ const Navbar = () => {
           </ul>
           <form className="d-flex">
             {/* <input className="form-control me-sm-2" type="search" placeholder="Search"/> */}
-            <button className="btn btn-secondary my-2 my-sm-0" type="submit">Login</button>
+            <button className="btn btn-secondary my-2 my-sm-0" type="submit" onClick={handleSubmit}>Register</button>
           </form>
           <form className="d-flex">
             {/* <input className="form-control me-sm-2" type="search" placeholder="Search"/> */}

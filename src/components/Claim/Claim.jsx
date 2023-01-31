@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getTimer } from '../../heplers/web3'
+import { getTimer, claimToken } from '../../helpers/web3'
 import Timer from '../Timer/Timer'
 
 const Claim = (props) => {
@@ -11,13 +11,17 @@ const Claim = (props) => {
     console.log({timer})
     const timestamp = Math.round(Date.now() / 1000);
     const currentTime = timestamp - Number(timer)
-    console.log({timestamp});
+    console.log("Time remaining is :", timerVal);
     setTimerVal(currentTime)
+  }
+
+  const handleClaimToken = async () => {
+    await claimToken()
   }
 
   useEffect(() => {
     getTimerValue()
-},[]);
+  },[]);
 
   return (
     <div>
@@ -25,8 +29,8 @@ const Claim = (props) => {
         <div className="card-header">Claim Token</div>
         <div className="card-body">
           <h4 className="card-title">Balance: {props.balance}</h4>
-          <p className="card-text">Connected Networt /// Add any test here</p>
-         <button type="button" className="btn btn-primary"  onClick={console.log('here')} >Claim Token</button>
+          <p className="card-text">Connected NetworK /// Add any test here</p>
+         <button type="button" className="btn btn-primary" disabled={timerVal > 0 ? true : false} onClick={handleClaimToken} >Claim Token</button>
         </div>
         {timerVal > 0 &&
                 <Timer timeLimit={timerVal}
