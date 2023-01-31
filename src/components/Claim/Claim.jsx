@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { getTimer, claimToken } from '../../helpers/web3'
 import Timer from '../Timer/Timer'
-import {convertFromWeiToEther} from '../../helpers/utils'
+import { Row, Col } from 'react-bootstrap'
+
 const Claim = (props) => {
 
   const [timerVal, setTimerVal] = useState(0)
@@ -14,8 +15,7 @@ const Claim = (props) => {
     console.log("Time remaining is :", timerVal);
     setTimerVal(currentTime)
   }
-  const balance = convertFromWeiToEther(props.balance)
-  console.log("balance is", balance)
+
   const handleClaimToken = async () => {
     await claimToken()
   }
@@ -26,19 +26,23 @@ const Claim = (props) => {
 
   return (
     <div>
-    <div className="card bg-dark mb-3"  style={{maxWidth: "20rem"}}>
-        <div className="card-header">Claim Token</div>
-        <div className="card-body">
-          <h4 className="card-title">Balance: {props.balance}</h4>
-          <p className="card-text">Connected NetworK /// Add any test here</p>
-         <button type="button" className="btn btn-primary" onClick={handleClaimToken} >Claim Token</button>
+    <Row>
+        <Col md={6} xs={12}>
+          <div className="card bg-dark mb-3"  style={{maxWidth: "20rem"}}>
+          <div className="card-header">Claim Token</div>
+          <div className="card-body">
+            <h4 className="card-title">Balance: {props.balance}</h4>
+            <p className="card-text">Connected NetworK /// Add any test here</p>
+          <button type="button" className="btn btn-primary" onClick={handleClaimToken} >Claim Token</button>
+          </div>
+          {timerVal > 0 &&
+                  <Timer timeLimit={timerVal}
+                  init = {true}
+              />
+          }
         </div>
-        {timerVal > 0 &&
-                <Timer timeLimit={timerVal}
-                init = {true}
-            />
-        }
-      </div>
+      </Col>
+    </Row>
     </div>
   )
 }

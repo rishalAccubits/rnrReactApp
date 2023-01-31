@@ -4,7 +4,7 @@ import { unlockQuestion  } from '../../helpers/web3';
 import {convertFromWeiToEther} from '../../helpers/utils'
 import swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
-
+import { Row, Col } from 'react-bootstrap'
 
 const Play = (props) => {
     const [questionSet, setQuestions] = useState([]);
@@ -18,7 +18,7 @@ const Play = (props) => {
             console.log({val})
             setQuestions(val.data)
         })
-    },[]);
+    },[props]);
 
     useEffect(() => {
       if(selectedItem) {
@@ -130,74 +130,50 @@ const Play = (props) => {
         <div>
           <span class="badge bg-info">Available Balance: {props.balance}</span>
         </div>
-        {questionSet && questionSet.map((item) => (
-          <div class="card bg-dark mb-3" style={{ maxWidth: "20rem" }}>
-            <div class="card-header">Difficulty: {item.question.difficulty}</div>
-            <div class="card-body">
-              {item.questionUnlocked && 
-                  <span class="badge bg-success">Unlocked</span>
-              }
-              {!item.questionUnlocked && 
-                  <span class="badge bg-danger">Locked</span>
-              }
-              {item.answerSubmitted && 
-                  <span class="badge bg-success">Attended</span>
-              }
-              <span class="badge bg-warning">{item.question.rewardMultiplier}X</span>
-              <h4 class="card-title">Topic: {item.question.topic}</h4>
-              {(item.questionUnlocked && !item.answerSubmitted )&&
-                <div id={item.question._id}>
-                  <button type="button" class="btn btn-secondary" onClick={() => handlePlay(item)}>
-                    Play
-                  </button>  
-                </div>
-              }
-              {item.answerSubmitted &&
-                <div id={item.question._id}>
-                  <button type="button" class="btn btn-secondary">
-                    Answered
-                  </button>  
-                </div>
-              }
-              {!item.questionUnlocked &&
-                <div id={item.question._id}>
-                  <button type="button" class="btn btn-secondary" onClick={() => handleItemClick(item)}>
-                    Unlock
-                  </button>  
-                </div>
-              }
-            </div>
-          </div>
-        ))}
-        
-        {modalOpen &&
-        <div class="modal">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Enter Accucoin Amount</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true"></span>
-              </button>
-            </div>
-            <div class="modal-body">
-            <div class="form-group">
-              <label class="form-label mt-4">Available balance: </label>
-              <div class="form-group">
-                <div class="input-group mb-3">
-                  <input type="text" class="form-control" placeholder="0 Accucoin" aria-label="accucoin" aria-describedby="button-addon2"/>
-                  <button class="btn btn-primary" type="button" id="button-addon2" onSubmit={handleSubmit}>Submit</button>
+        <Row>
+          {questionSet && questionSet.map((item, index) => (
+            <Col md={6} key={index}>
+                <div class="card bg-dark mb-3" style={{ maxWidth: "20rem" }}>
+                <div class="card-header">Difficulty: {item.question.difficulty}</div>
+                <div class="card-body">
+                  {item.questionUnlocked && 
+                      <span class="badge bg-success">Unlocked</span>
+                  }
+                  {!item.questionUnlocked && 
+                      <span class="badge bg-danger">Locked</span>
+                  }
+                  {item.answerSubmitted && 
+                      <span class="badge bg-success">Attended</span>
+                  }
+                  <span class="badge bg-warning">{item.question.rewardMultiplier}X</span>
+                  <h4 class="card-title">Topic: {item.question.topic}</h4>
+                  {(item.questionUnlocked && !item.answerSubmitted )&&
+                    <div id={item.question._id}>
+                      <button type="button" class="btn btn-secondary" onClick={() => handlePlay(item)}>
+                        Play
+                      </button>  
+                    </div>
+                  }
+                  {item.answerSubmitted &&
+                    <div id={item.question._id}>
+                      <button type="button" class="btn btn-secondary">
+                        Answered
+                      </button>  
+                    </div>
+                  }
+                  {!item.questionUnlocked &&
+                    <div id={item.question._id}>
+                      <button type="button" class="btn btn-secondary" onClick={() => handleItemClick(item)}>
+                        Unlock
+                      </button>  
+                    </div>
+                  }
                 </div>
               </div>
-            </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        }   
+            </Col>
+          ))}
+        </Row>
+
         {questionSet.length < 1 && (
           <div>
             <div class="alert alert-dismissible alert-danger">

@@ -11,8 +11,18 @@ const Leaderboard = () => {
         console.log({val})
         setLeaderboard(val.data.users)
     })
-},[]);
+  },[]);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const fetchData = async () => {
+        const result = await leaderBoard();
+        setLeaderboard(result.data.users);
+      };
+      fetchData();
+    }, 600000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getAccount } from '../../helpers/web3';
 import { registerUser } from '../../helpers/api'
 import swal from 'sweetalert';
+import { Row, Col} from 'react-bootstrap';
 
 const Register = (props) => {
   const [email, setEmail] = useState("")
@@ -61,25 +62,29 @@ const Register = (props) => {
 
   return (
     <div>
-        <form>
-            <fieldset>
-                <legend>Registration For Cryptopathi</legend>
-                <div className="form-group">
-                  <label htmlFor="exampleInputName1" className="form-label mt-4">Name</label>
-                  <input type="text" className="form-control" id="exampleInputName1" placeholder="Name" onChange={handleNameChange} value={name} />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="exampleInputEmail1" className="form-label mt-4">Email address</label>
-                  <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" onChange={handleEmailChange} value={email}></input>
-                  <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
-                </div>
-                <div className="form-group">
-                  <label htmlFor="exampleWalletAddress" className="form-label mt-4">Wallet Address</label>
-                  <input type="text" className="form-control" id="exampleWalletAddress" placeholder="Wallet Address" readOnly={true}  value={props.account} />
-                </div>                
-                <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
-            </fieldset>
-        </form>
+      <Row>
+        <Col md={6}>
+          <form>
+              <fieldset>
+                  <legend>Registration For Cryptopathi</legend>
+                  <div className="form-group">
+                    <label htmlFor="exampleInputName1" className="form-label mt-4">Name</label>
+                    <input type="text" className="form-control" id="exampleInputName1" placeholder="Name" onChange={handleNameChange} value={name} />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="exampleInputEmail1" className="form-label mt-4">Email address</label>
+                    <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email" onChange={handleEmailChange} value={email}></input>
+                    <small id="emailHelp" className="form-text text-muted">We'll never share your email with anyone else.</small>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="exampleWalletAddress" className="form-label mt-4">Wallet Address</label>
+                    <input type="text" className="form-control" id="exampleWalletAddress" placeholder="Wallet Address" readOnly={true}  value={props.account} />
+                  </div>                
+                  <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+              </fieldset>
+          </form>
+        </Col>
+      </Row>
     </div>
   )
 }

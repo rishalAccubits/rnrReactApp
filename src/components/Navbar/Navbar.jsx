@@ -1,9 +1,10 @@
 import React from 'react'
 import { Link, useNavigate } from "react-router-dom"
 import {  nav, button, form, input, Image } from "react-bootstrap";
+import { getBsProps } from 'react-bootstrap/lib/utils/bootstrapUtils';
 // import { Web3Modal } from '@web3modal/standalone'
 
-const Navbar = () => {
+const Navbar = (props) => {
   const navigate = useNavigate();
 
 
@@ -23,23 +24,25 @@ const Navbar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarColor03">
           <ul className="navbar-nav me-auto">
-            <li className="nav-item">
-              <Link to='/claim'><href className="nav-link">Claim-Token</href></Link>
-            </li>
-            <li className="nav-item">
-              <Link to='/play'><href className="nav-link">Play</href></Link>
-            </li>
-            <li className="nav-item">
-              <Link to='/leaderboard'><href className="nav-link">Leader Board</href></Link>
-            </li>
+            { props.registrationStatus &&
+              <li className="nav-item">
+                <Link to='/claim'><href className="nav-link">Claim-Token</href></Link>
+              </li>
+            }
+            { props.registrationStatus &&
+              <li className="nav-item">
+                <Link to='/play'><href className="nav-link">Play</href></Link>
+              </li>
+            }
+            { props.registrationStatus &&
+              <li className="nav-item">
+                <Link to='/leaderboard'><href className="nav-link">Leader Board</href></Link>
+              </li>
+            }
           </ul>
           <form className="d-flex">
             {/* <input className="form-control me-sm-2" type="search" placeholder="Search"/> */}
-            <button className="btn btn-secondary my-2 my-sm-0" type="submit" onClick={handleSubmit}>Register</button>
-          </form>
-          <form className="d-flex">
-            {/* <input className="form-control me-sm-2" type="search" placeholder="Search"/> */}
-            <button className="btn btn-secondary my-2 my-sm-0" type="submit">Connect Wallet</button>
+            <button className="btn btn-secondary my-2 my-sm-0" type="submit" disabled={props.registrationStatus} onClick={handleSubmit}>Register</button>
           </form>
         </div>
       </div>

@@ -52,3 +52,13 @@ export const submitAnswer = async (id, account, option) => {
     );
   return response.data
 }
+
+export const getRegistrationStatus = async (account) => {
+  console.log("here log")
+
+    const response = await axios.get(
+      `${serverUrl}/user/is-registered?walletAddress=${account}`
+      );
+    console.log({response})
+    return response.data
+}
