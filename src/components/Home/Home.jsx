@@ -9,42 +9,57 @@ import LeaderBoard from '../LeaderBoard/LeaderBoard';
 import { getAccount, getCoinBalance, metamaskStatus } from '../../helpers/web3';
 import detectEthereumProvider from '@metamask/detect-provider'
 import swal from 'sweetalert';
-
+import { magic } from "../../Utils/magic"
 
 const Home = () => {
 
     const [connected, setConnected] = useState(false)
+    const [magiclogged, setMagicLogged] = useState(false)
     const [account, setAccount] = useState("0x0000000000000000000000000000000000000000")
     const [balance, setBalance] = useState("0")
 
     const getNetworkStatus = async () => {
         const provider = await detectEthereumProvider()
         if (provider) {
-            const chainId = await provider.request({
-              method: 'eth_chainId'
-            })
-            if(!chainId || chainId !== '0x5')
-            {
-                setConnected(false)
-                swal("Wrong Network", "Please Switch to Goerli Network", "error");
-            }
-            else if(chainId === '0x5')
-                getAccount().then((val) => setAccount(val))
-                getCoinBalance().then((val) => setBalance(val))
-                setConnected(true)
-        } else {
+          const chainId = await provider.request({
+            method: 'eth_chainId'
+          })
+          if (!chainId || chainId !== '0x5') {
             setConnected(false)
-            swal("Wallet Not Found", "Please Install Metamask", "error");
+            swal("Wrong Network", "Please Switch to Goerli Network", "error");
           }
+          else if (chainId === '0x5')
+            getAccount().then((val) => setAccount(val))
+          getCoinBalance().then((val) => setBalance(val))
+          setConnected(true)
+        } else {
+          setConnected(false)
+          swal("Wallet Not Found", "Please Install Metamask", "error");
+        }
+    }
+
+    const getMagicDetails =async ()=>{
+      const isLoggedIn = await magic.user.isLoggedIn();
+      if (isLoggedIn) {
+        const userMetadata = await magic.user.getMetadata();
+        alert("Magic logged in, check console for metadata")
+        console.log(userMetadata)
+      }
     }
 
     useEffect(() => {
         getNetworkStatus()
     },[]);
     
+
+    useEffect(()=>{
+      if(magiclogged){
+        getMagicDetails()
+      }
+    },[magiclogged])
   return (
     <div>
-     <Navbar/>
+     <Navbar setMagicLogged={setMagicLogged} magiclogged={magiclogged}/>
      <div>
         { connected &&
         <Routes>
