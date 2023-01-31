@@ -22,7 +22,7 @@ const Claim = (props) => {
 
   useEffect(() => {
     getTimerValue()
-  },[]);
+  },[timerVal]);
 
   return (
     <div>

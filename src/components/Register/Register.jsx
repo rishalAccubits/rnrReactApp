@@ -62,8 +62,7 @@ const Register = (props) => {
 
   return (
     <div>
-      <Row>
-        <Col md={6}>
+      
           <form>
               <fieldset>
                   <legend>Registration For Cryptopathi</legend>
@@ -80,11 +79,10 @@ const Register = (props) => {
                     <label htmlFor="exampleWalletAddress" className="form-label mt-4">Wallet Address</label>
                     <input type="text" className="form-control" id="exampleWalletAddress" placeholder="Wallet Address" readOnly={true}  value={props.account} />
                   </div>                
-                  <button type="submit" className="btn btn-primary" onClick={handleSubmit}>Submit</button>
+                  <button type="submit" className="btn btn-primary" onClick={()=>handleSubmit}>Submit</button>
               </fieldset>
           </form>
-        </Col>
-      </Row>
+       
     </div>
   )
 }

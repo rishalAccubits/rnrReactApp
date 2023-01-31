@@ -1,17 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import Landing from '../Landing/Landing'
-import Register from '../Register/Register';
-import Navbar from '../Navbar/Navbar'
-import { Route, Routes, BrowserRouter, Link } from "react-router-dom";
-import Claim from '../Claim/Claim';
-import Play from '../Play/Play';
-import LeaderBoard from '../LeaderBoard/LeaderBoard';
-import { getAccount, getCoinBalance, metamaskStatus } from '../../helpers/web3';
+import React, { useEffect, useState } from 'react'
+import { getAccount, getCoinBalance } from '../../helpers/web3';
 import detectEthereumProvider from '@metamask/detect-provider'
 import swal from 'sweetalert';
 import web3 from 'web3';
-import {chainIdentifier} from '../../config/config'
+import {chainIdentifier, events} from '../../config/config'
 import { getRegistrationStatus } from '../../helpers/api';
+import Cryptopati from './Cryptopati';
+import Auction from './Auction';
+import Card from '../Card/Card';
+import { Row, Col } from 'react-bootstrap'
 
 const Home = () => {
 
@@ -19,6 +16,8 @@ const Home = () => {
     const [account, setAccount] = useState(null)
     const [balance, setBalance] = useState("0")
     const [registrationStatus, setRegistrationStatus] = useState(false);
+    const [eventSelected, setEventSelected] = useState(0);
+
 
     const changeNetwork = async () => {
       const chainId = chainIdentifier // Polygon Mainnet
@@ -106,75 +105,43 @@ const Home = () => {
             setRegistrationStatus(item.data.userRegistered)
           })
         }
-    },[account]);
+    },[account,connected]);
     
     console.log('Registration Status', registrationStatus)
+
   return (
     <div>
-     <Navbar registrationStatus={registrationStatus} connected={connected} />
-     <div>
-        { (connected && registrationStatus )&&
-        <Routes>
-        <Route
-          path="/"
-          element={
-              <Landing 
-                account={account}
-                balance={balance}
-              />
-          }
-        />
-        <Route
-          path="/claim"
-          element={
-              <Claim 
-                account={account}
-                balance={balance}
-                setBalance={setBalance}
-             />
-          }
-        />
-        <Route
-          path="/play"
-          element={
-              <Play 
-                account={account}
-                balance={balance}/>
-          }
-        />
-        <Route
-          path="/leaderboard"
-          element={
-              <LeaderBoard />
-          }
-        />
-        
-      </Routes>}
-      {!registrationStatus &&
-        <Routes>
-        <Route
-            path="/register"
-            element={
-                <Register 
-                  account={account}
-                  balance={balance}
-                />
+        {eventSelected === 0 &&
+            <div>
+                <Row>
+                <Col md={6}>
+                <Card onClick = {setEventSelected} data = {events.cryptopati}/> 
+                </Col>
+                <Col md={6}>
+                <Card onClick = {setEventSelected} data = {events.auction}/>
+                </Col>
+
+                </Row>
+             </div>
             }
-          />
-          <Route
-            path="/tutorial"
-            element={
-                <Claim 
-                  account={account}
-                  balance={balance}
-                  setBalance={setBalance}
-              />
-            }
-          />    
-      </Routes>
-      }
-     </div>
-     
+        {
+         eventSelected === 1 &&
+            <Cryptopati 
+                registrationStatus = {registrationStatus}
+                connected = {connected}
+                account = {account}
+                balance = {balance}
+            />
+        }
+       {
+        eventSelected === 2 &&
+            <Auction 
+                registrationStatus = {registrationStatus}
+                connected = {connected}
+                account = {account}
+                balance = {balance}
+            />
+       }
     </div>
   )
 }

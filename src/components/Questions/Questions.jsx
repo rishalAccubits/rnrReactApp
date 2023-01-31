@@ -17,7 +17,7 @@ const Question = (props) => {
         setunlockedQn(item.data)
     })
     .catch((error) => {
-        console.log("Error",item)
+        console.log("Error",error)
     })
   },[]);
 
